@@ -9,7 +9,7 @@ import java.util.Scanner;
 public class Main {
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         Scanner sc = new Scanner(System.in);
         String choiseStr;
         String sourceFile, resultFile, firstFile, secondFile;
@@ -56,12 +56,14 @@ public class Main {
         sc.close();
     }
 
-    public static void comp(String sourceFile, String resultFile) {
-        // TODO: implement this method
+    public static void comp(String sourceFile, String resultFile) throws IOException {
+        LZW lzw = new LZW(sourceFile, resultFile);
+        lzw.comp();
     }
 
     public static void decomp(String sourceFile, String resultFile) {
-        // TODO: implement this method
+        LZW lzw = new LZW(sourceFile,resultFile);
+        lzw.decode();
     }
 
     public static void size(String sourceFile) {
@@ -112,7 +114,7 @@ public class Main {
 
     public static void about() {
         // TODO insert information about authors
-        System.out.println("000RDB000 Jānis Programmētājs");
-        System.out.println("111RDB111 Ilze Programmētāja");
+        System.out.println("211RDB208 Artjoms Melihovs");
+        System.out.println("211RDB205 Maksims Jarinovskis");
     }
 }
