@@ -1,7 +1,5 @@
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 
 public class LZW {
@@ -20,7 +18,7 @@ public class LZW {
 
         int dictSize = 256;
         Map<String, Integer> dictionary = new HashMap<>();
-        for (int i = 0; i < dictSize; i++) {
+        for (int i = 32; i < dictSize; i++) {
             dictionary.put(String.valueOf((char) i), i);
         }
         ArrayList<String> result = new ArrayList<>();
@@ -47,36 +45,50 @@ public class LZW {
         wf.writeIntoFile();
    }
 
-    public void decode() {
+    public void decode() throws IOException {
 
         LineReader lr = new LineReader(sourceFile);
         ArrayList<String> stringArr = lr.readLine();
         ArrayList<Integer> encodedText = new ArrayList<>();
-        for(String stringValue : stringArr) {
-            try {
-                encodedText.add(Integer.parseInt(stringValue));
-            } catch(NumberFormatException nfe) {
-                System.out.println(nfe.getMessage());
-            }
-        }
+        ArrayList<String> output = new ArrayList<>();
         int dictSize = 256;
         Map<Integer, String> dictionary = new HashMap<>();
-        for (int i = 0; i < dictSize; i++) {
-                dictionary.put(i, String.valueOf((char) i));
+        for (int i = 32; i < dictSize; i++) {
+            dictionary.put(i, String.valueOf((char) i));
+        }
+        String [] numbers;
+        for(int i = 0; i < stringArr.size(); i++) {
+            String stringValue = stringArr.get(i);
+            if (Objects.equals(stringValue, "")) continue;;
+            numbers = stringValue.split(" ");
+            for (int j = 0; j < numbers.length; j++) {
+                try {
+                    encodedText.add(Integer.parseInt(numbers[j]));
+                } catch(NumberFormatException nfe) {
+                    System.out.println(nfe.getMessage());
+                }
+            }
+            String characters = dictionary.get(encodedText.get(0));
+            encodedText.remove(0);
+            StringBuilder result = new StringBuilder(characters);
+            for (int code : encodedText) {
+                String entry = dictionary.containsKey(code)
+                        ? dictionary.get(code)
+                        : characters + characters.charAt(0);
+                result.append(entry);
+                dictionary.put(dictSize++, characters + entry.charAt(0));
+                characters = entry;
+            }
+
+            output.add(String.valueOf(result));
+            output.add("");
+            result.delete(0,result.length());
+            Arrays.fill(numbers,null);
+            encodedText.clear();
         }
 
-        String characters = String.valueOf((char) encodedText.remove(0).intValue());
-        StringBuilder result = new StringBuilder(characters);
-        for (int code : encodedText) {
-            String entry = dictionary.containsKey(code)
-                    ? dictionary.get(code)
-                    : characters + characters.charAt(0);
-            result.append(entry);
-            dictionary.put(dictSize++, characters + entry.charAt(0));
-            characters = entry;
-        }
-
-        System.out.println(result);
+        WriteFile wf = new WriteFile(resultFile, output);
+        wf.writeIntoFile();
 
     }
 }

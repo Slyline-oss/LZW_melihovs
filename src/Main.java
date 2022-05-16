@@ -61,7 +61,7 @@ public class Main {
         lzw.comp();
     }
 
-    public static void decomp(String sourceFile, String resultFile) {
+    public static void decomp(String sourceFile, String resultFile) throws IOException {
         LZW lzw = new LZW(sourceFile,resultFile);
         lzw.decode();
     }
